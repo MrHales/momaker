@@ -1,0 +1,16 @@
+{
+  "name": "MoM Wizard Creator",
+  "short_name": "MoM Wizards",
+  "description": "Progressive Web App for creating Master of Magic 2022 Custom Wizards",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#0d0914",
+  "theme_color": "#8a2be2",
+  "icons": [
+    {
+      "src": "assets/wizard_life.png",
+      "sizes": "192x192 512x512",
+      "type": "image/png"
+    }
+  ]
+}

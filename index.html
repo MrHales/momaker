@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>MoM Wizard Creator</title>
+    <!-- Modern typography -->
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <link rel="manifest" href="manifest.json">
+</head>
+<body>
+    <div id="app">
+        <!-- HEADER / NAVIGATION -->
+        <header class="app-header">
+            <h1 class="glow-text">Master of Magic</h1>
+            <nav>
+                <button id="nav-editor" class="nav-btn active">Editor</button>
+                <button id="nav-saves" class="nav-btn">Saves</button>
+            </nav>
+        </header>
+
+        <!-- WIZARD EDITOR VIEW -->
+        <main id="view-editor" class="view active">
+            <!-- Summary Bar (Sticky) -->
+            <div class="summary-bar glass-panel">
+                <div class="picks-remain">
+                    <span id="picks-counter" class="counter">11</span>
+                    <span class="label">Picks Remaining</span>
+                </div>
+                <button id="btn-save" class="btn-primary" disabled>Save Wizard</button>
+            </div>
+
+            <!-- Portrait Selection -->
+            <div class="section">
+                <h2>Wizard Portrait</h2>
+                <div class="portrait-carousel">
+                    <button class="portrait-btn arrow-btn" id="portrait-prev">&lt;</button>
+                    <div class="portrait-container">
+                        <img id="wizard-portrait" src="assets/wizard_life.png" alt="Wizard Portrait">
+                    </div>
+                    <button class="portrait-btn arrow-btn" id="portrait-next">&gt;</button>
+                </div>
+                <div class="input-group">
+                    <input type="text" id="wizard-name" placeholder="Enter Wizard Name..." maxlength="30">
+                </div>
+            </div>
+
+            <!-- Spellbooks -->
+            <div class="section">
+                <h2>Spellbooks (1 pick each)</h2>
+                <p class="section-note">Selecting Life magic prevents picking Death magic, and vice-versa.</p>
+                <div class="spellbook-grid" id="spellbooks-container">
+                    <!-- Javascript will populate this -->
+                </div>
+            </div>
+
+            <!-- Retorts -->
+            <div class="section">
+                <h2>Retorts</h2>
+                <div class="retorts-list" id="retorts-container">
+                    <!-- Javascript will populate this -->
+                </div>
+            </div>
+        </main>
+
+        <!-- SAVED WIZARDS VIEW -->
+        <main id="view-saves" class="view hidden">
+            <div class="section">
+                <h2>My Custom Wizards</h2>
+                <div id="saved-wizards-list" class="wizards-grid">
+                    <!-- Saved Wizards populated by JS -->
+                </div>
+            </div>
+            
+            <div class="section">
+                <h2>Pregenerated Wizards</h2>
+                <div id="pregen-wizards-list" class="wizards-grid">
+                    <!-- Pregen Wizards populated by JS -->
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Modals / Toasts -->
+    <div id="toast" class="toast hidden">Wizard Saved!</div>
+    
+    <script src="main.js"></script>
+    <script>
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('sw.js').then(function(registration) {
+                console.log('ServiceWorker registration successful');
+            }).catch(function(err) {
+                console.log('ServiceWorker registration failed: ', err);
+            });
+        }
+    </script>
+</body>
+</html>
