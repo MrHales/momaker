@@ -296,7 +296,7 @@ function updateWizardSummary() {
 window.scrollToTrait = function(id) {
     const el = document.getElementById(`trait-${id}`);
     if (el) {
-        const offset = 120; // sticky header offset
+        const offset = 180; // Increase offset for multi-line sticky header
         const bodyRect = document.body.getBoundingClientRect().top;
         const elementRect = el.getBoundingClientRect().top;
         const elementPosition = elementRect - bodyRect;
