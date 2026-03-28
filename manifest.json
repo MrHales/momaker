@@ -8,7 +8,7 @@
   "theme_color": "#8a2be2",
   "icons": [
     {
-      "src": "assets/wizard_life.png",
+      "src": "portraits/ariel.png",
       "sizes": "192x192 512x512",
       "type": "image/png"
     }
