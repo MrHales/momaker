@@ -65,6 +65,7 @@ function init() {
     // Event Listeners
     document.getElementById('nav-editor').addEventListener('click', () => switchView('editor'));
     document.getElementById('nav-saves').addEventListener('click', () => switchView('saves'));
+    document.getElementById('nav-classics').addEventListener('click', () => switchView('classics'));
     
     document.getElementById('portrait-prev').addEventListener('click', () => cyclePortrait(-1));
     document.getElementById('portrait-next').addEventListener('click', () => cyclePortrait(1));
@@ -412,7 +413,7 @@ function renderSaves() {
 }
 
 function renderPregen() {
-    const container = document.getElementById('pregen-wizards-list');
+    const container = document.getElementById('classics-wizards-list');
     container.innerHTML = PREGEN.map(wiz => generateSaveCardHTML(wiz, true)).join('');
 }
 
