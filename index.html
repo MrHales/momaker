@@ -39,7 +39,10 @@
                         </select>
                     </div>
                 </div>
-                <button id="btn-save" class="btn-primary" disabled>Save Wizard</button>
+                <div class="action-buttons" style="display:flex; gap:1rem;">
+                    <button id="btn-clear" class="btn-secondary" onclick="resetEditor()">New Wizard</button>
+                    <button id="btn-save" class="btn-primary" disabled>Save Wizard</button>
+                </div>
             </div>
 
             <!-- Portrait Selection -->
@@ -94,6 +97,10 @@
                 </div>
             </div>
         </main>
+        
+        <footer style="text-align: center; color: var(--text-muted); font-size: 0.8rem; margin: 2rem 0 1rem 0; padding-top: 1rem; border-top: 1px solid rgba(255,255,255,0.1);">
+            Copyright &copy; 2026 Slitherine Software UK Ltd. All other Trade Marks belong to their respective owners. All rights reserved.
+        </footer>
     </div>
 
     <!-- Modals / Toasts -->

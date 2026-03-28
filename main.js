@@ -309,8 +309,10 @@ function renderTraits() {
 // SAVES AND STATE MANAGEMENT 
 // -----------------------------------------------------------------
 function saveWizard() {
+    const isNew = !state.id;
+    const saveId = state.id || Date.now().toString();
     const wiz = {
-        id: Date.now().toString(),
+        id: saveId,
         name: state.name.trim(),
         portraitIdx: state.portraitIdx,
         spellbooks: { ...state.spellbooks },
@@ -320,11 +322,16 @@ function saveWizard() {
     };
     
     // Check if updating
-    const existingIdx = saves.findIndex(s => s.id === state.id);
-    if (existingIdx >= 0) {
-        saves[existingIdx] = wiz;
-    } else {
+    if (isNew) {
+        state.id = saveId; // Now editing the saved version
         saves.push(wiz);
+    } else {
+        const existingIdx = saves.findIndex(s => s.id === state.id);
+        if (existingIdx >= 0) {
+            saves[existingIdx] = wiz;
+        } else {
+            saves.push(wiz);
+        }
     }
     
     localStorage.setItem('mom_wizards', JSON.stringify(saves));
