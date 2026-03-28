@@ -313,14 +313,14 @@ input[type="text"]:focus {
     width: 20px;
 }
 
-/* Retorts */
-.retorts-list {
+/* Traits */
+.traits-list {
     display: flex;
     flex-direction: column;
     gap: 1rem;
 }
 
-.retort-card {
+.trait-card {
     background: var(--glass-bg);
     border: 1px solid var(--glass-border);
     border-radius: 8px;
@@ -332,40 +332,40 @@ input[type="text"]:focus {
     cursor: pointer;
 }
 
-.retort-card:active {
+.trait-card:active {
     transform: scale(0.98);
 }
 
-.retort-card.active {
+.trait-card.active {
     border-color: var(--acc-color-primary);
     background: rgba(138,43,226,0.15);
     box-shadow: 0 0 15px rgba(138,43,226,0.2) inset;
 }
 
-.retort-card.disabled {
+.trait-card.disabled {
     opacity: 0.4;
     cursor: not-allowed;
 }
 
-.retort-info {
+.trait-info {
     flex: 1;
     padding-right: 1rem;
 }
 
-.retort-header {
+.trait-header {
     display: flex;
     align-items: center;
     gap: 0.5rem;
     margin-bottom: 0.3rem;
 }
 
-.retort-name {
+.trait-name {
     font-family: var(--font-heading);
     font-size: 1.1rem;
     color: white;
 }
 
-.retort-cost {
+.trait-cost {
     background: rgba(255,215,0,0.2);
     color: var(--acc-color-gold);
     font-size: 0.75rem;
@@ -374,13 +374,13 @@ input[type="text"]:focus {
     font-weight: bold;
 }
 
-.retort-desc {
+.trait-desc {
     font-size: 0.85rem;
     color: var(--text-muted);
 }
 
-/* Custom Checkbox styles for Retort Card overall active state */
-.retort-checkbox {
+/* Custom Checkbox styles for Trait Card overall active state */
+.trait-checkbox {
     width: 24px;
     height: 24px;
     border-radius: 50%;
@@ -388,14 +388,94 @@ input[type="text"]:focus {
     display: grid;
     place-items: center;
 }
-.retort-card.active .retort-checkbox {
+.trait-card.active .trait-checkbox {
     border-color: var(--acc-color-primary);
     background: var(--acc-color-primary);
 }
-.retort-card.active .retort-checkbox::after {
+.trait-card.active .trait-checkbox::after {
     content: "✓";
     color: white;
     font-size: 14px;
+}
+
+/* Info Button */
+.info-btn {
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid var(--glass-border);
+    color: var(--text-muted);
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    font-size: 0.75rem;
+    cursor: pointer;
+    vertical-align: middle;
+    margin-left: 0.5rem;
+}
+.info-btn:hover {
+    color: white;
+    border-color: var(--acc-color-primary);
+    box-shadow: 0 0 5px var(--acc-color-primary);
+}
+
+/* Modal Overlay */
+.modal-overlay {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0,0,0,0.7);
+    backdrop-filter: blur(5px);
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    animation: fadeIn 0.3s;
+}
+.modal-overlay.hidden {
+    display: none;
+}
+.modal-window {
+    width: 90%;
+    max-width: 600px;
+    max-height: 80vh;
+    padding: 1.5rem;
+    position: relative;
+    overflow-y: auto;
+}
+.modal-close-btn {
+    position: absolute;
+    top: 1rem; right: 1rem;
+    background: transparent;
+    color: white;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+}
+.modal-body {
+    margin-top: 1rem;
+    font-size: 0.95rem;
+}
+.modal-body p {
+    margin-bottom: 0.8rem;
+}
+
+/* Data Table */
+.data-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 1rem;
+    font-size: 0.85rem;
+}
+.data-table th, .data-table td {
+    padding: 0.5rem;
+    border: 1px solid var(--glass-border);
+    text-align: center;
+}
+.data-table th {
+    background: rgba(138,43,226,0.2);
+    font-family: var(--font-heading);
+    color: var(--acc-color-gold);
+}
+.data-table tr:hover td {
+    background: rgba(255,255,255,0.05);
 }
 
 /* Saved Wizards Gallery */

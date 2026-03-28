@@ -1,58 +1,36 @@
-/* MoM Wizard Creator Logic */
+/* MoMaker Logic */
 
 const TOTAL_PICKS = 11;
 
-// Data Structures
-const REALMS = [
-    { id: 'nature', name: 'Nature', class: 'realm-nature' },
-    { id: 'sorcery', name: 'Sorcery', class: 'realm-sorcery' },
-    { id: 'chaos', name: 'Chaos', class: 'realm-chaos' },
-    { id: 'life', name: 'Life', class: 'realm-life' },
-    { id: 'death', name: 'Death', class: 'realm-death' }
-];
-
-const RETORTS = [
-    { id: 'myrran', name: 'Myrran', cost: 3, desc: 'Start on the Myrror plane with a Myrran race.' },
-    { id: 'warlord', name: 'Warlord', cost: 2, desc: 'All normal units gain one level of experience instantly.' },
-    { id: 'channeler', name: 'Channeler', cost: 2, desc: 'Reduces mana maintenance for summoned creatures by 50%.' },
-    { id: 'archmage', name: 'Archmage', cost: 1, desc: 'Increases casting skill progress.' },
-    { id: 'alchemy', name: 'Alchemy', cost: 1, desc: 'Converts mana to gold and gold to mana at a 1:1 ratio.' },
-    { id: 'divine_power', name: 'Divine Power', cost: 2, desc: 'Gain power from religious buildings (requires level in Life/Nature/Sorcery/Chaos/Death but generally Life).' },
-    { id: 'infernal_power', name: 'Infernal Power', cost: 2, desc: 'Gain power from dark rituals and dark buildings (Death).' },
-    { id: 'famous', name: 'Famous', cost: 2, desc: 'Double starting fame, better mercenaries.' },
-    { id: 'runemaster', name: 'Runemaster', cost: 1, desc: 'Double dispel power, crafting artifacts is 50% cheaper.' },
-    { id: 'charismatic', name: 'Charismatic', cost: 1, desc: 'Diplomacy bonus, artifacts and mercenaries cost 50% less gold.' },
-    { id: 'conjurer', name: 'Conjurer', cost: 1, desc: 'Summon spells cost 25% less research and cast.' },
-    { id: 'specialist', name: 'Specialist', cost: 1, desc: 'Spells from realms other than Arcane research faster if mostly focused.' }
-];
+// Data Structures (REALMS, TRAITS, PREGEN, SPELL_RANKS are in data.js)
 
 const PORTRAITS = [
-    'assets/wizard_life.png',
-    'assets/wizard_death.png',
-    'assets/wizard_nature.png',
-    'assets/wizard_chaos.png'
-];
-
-// Pregenerated Examples
-const PREGEN = [
-    {
-        name: "Merlin",
-        portraitIdx: 2,
-        spellbooks: { nature: 5, life: 3, sorcery: 0, chaos: 0, death: 0 },
-        retorts: ['archmage', 'charismatic', 'sage_master'] // Sage master not defined above, we'll keep it simple
-    },
-    {
-        name: "Lo Pan",
-        portraitIdx: 3,
-        spellbooks: { sorcery: 5, chaos: 3, nature: 0, life: 0, death: 0 },
-        retorts: ['channeler']
-    },
-    {
-        name: "Vlad",
-        portraitIdx: 1,
-        spellbooks: { death: 8, chaos: 0, nature: 0, life: 0, sorcery: 0 },
-        retorts: ['infernal_power', 'channeler'] // Costs: 8 + 2 + 2 = 12 wait, maybe we cap at 11
-    }
+    'portraits/ariel.png',
+    'portraits/belit.png',
+    'portraits/bianka.png',
+    'portraits/bladud.png',
+    'portraits/corax.png',
+    'portraits/freya.png',
+    'portraits/gayn.png',
+    'portraits/grendel.png',
+    'portraits/horus.png',
+    'portraits/jafar.png',
+    'portraits/kali.png',
+    'portraits/lopan.png',
+    'portraits/merlin.png',
+    'portraits/morique.png',
+    'portraits/nineseven.png',
+    'portraits/oberic.png',
+    'portraits/queen_xarxla.png',
+    'portraits/raass.png',
+    'portraits/raven.png',
+    'portraits/rjak.png',
+    'portraits/sharee.png',
+    'portraits/sir_horatio.png',
+    'portraits/sssra.png',
+    'portraits/tauron.png',
+    'portraits/tlachtga.jpg',
+    'portraits/tlaloc.png'
 ];
 
 // State
@@ -60,10 +38,14 @@ let state = {
     name: '',
     portraitIdx: 0,
     spellbooks: { nature: 0, sorcery: 0, chaos: 0, life: 0, death: 0 },
-    retorts: [] // array of id strings
+    traits: [] // array of id strings
 };
 
 let saves = JSON.parse(localStorage.getItem('mom_wizards') || '[]');
+if (saves.length > 0 && saves[0].retorts !== undefined) {
+    saves = [];
+    localStorage.setItem('mom_wizards', '[]');
+}
 
 // DOM Elements
 const elPicks = document.getElementById('picks-counter');
@@ -76,10 +58,12 @@ const elName = document.getElementById('wizard-name');
 // -----------------------------------------------------------------
 function init() {
     renderSpellbooks();
-    renderRetorts();
+    renderTraits();
     updateUI();
     renderSaves();
     renderPregen();
+    
+    setupModal();
 
     // Event Listeners
     document.getElementById('nav-editor').addEventListener('click', () => switchView('editor'));
@@ -105,10 +89,10 @@ function getPicksSpent() {
     for (let realm in state.spellbooks) {
         spent += state.spellbooks[realm];
     }
-    // Count retorts
-    state.retorts.forEach(rid => {
-        const retort = RETORTS.find(r => r.id === rid);
-        if (retort) spent += retort.cost;
+    // Count traits
+    state.traits.forEach(rid => {
+        const trait = TRAITS.find(t => t.id === rid);
+        if (trait) spent += trait.cost;
     });
     return spent;
 }
@@ -153,10 +137,12 @@ function updateUI() {
         }
     });
 
-    // Update Retorts UI
-    RETORTS.forEach(ret => {
-        const card = document.getElementById(`retort-${ret.id}`);
-        const isActive = state.retorts.includes(ret.id);
+    // Update Traits UI
+    TRAITS.forEach(t => {
+        const card = document.getElementById(`trait-${t.id}`);
+        // Add a check in case the trait ID does not exist securely yet
+        if (!card) return;
+        const isActive = state.traits.includes(t.id);
         
         if (isActive) {
             card.classList.add('active');
@@ -164,7 +150,7 @@ function updateUI() {
         } else {
             card.classList.remove('active');
             // Disable if not enough points left to buy it
-            if (remaining < ret.cost) {
+            if (remaining < t.cost) {
                 card.classList.add('disabled');
             } else {
                 card.classList.remove('disabled');
@@ -182,19 +168,19 @@ function updateSaveButtonState() {
     elSaveBtn.disabled = !hasName || remaining < 0; // || remaining > 0 (Wait, in standard MoM you don't HAVE to spend all points)
 }
 
-function toggleRetort(id) {
-    const ret = RETORTS.find(r => r.id === id);
-    const cost = ret.cost;
+function toggleTrait(id) {
+    const t = TRAITS.find(tr => tr.id === id);
+    const cost = t.cost;
     const remaining = TOTAL_PICKS - getPicksSpent();
-    const idx = state.retorts.indexOf(id);
+    const idx = state.traits.indexOf(id);
     
     if (idx >= 0) {
         // Remove it
-        state.retorts.splice(idx, 1);
+        state.traits.splice(idx, 1);
     } else {
         // Add it if points allow
         if (remaining >= cost) {
-            state.retorts.push(id);
+            state.traits.push(id);
         }
     }
     updateUI();
@@ -241,7 +227,10 @@ function renderSpellbooks() {
         div.id = `card-${realm.id}`;
         
         div.innerHTML = `
-            <div class="realm-name ${realm.class}">${realm.name}</div>
+            <div class="realm-name ${realm.class}">
+                ${realm.name}
+                <button class="info-btn" onclick="showRealmInfo('${realm.id}')">?</button>
+            </div>
             <div class="realm-controls">
                 <button class="ctrl-btn" id="minus-${realm.id}">-</button>
                 <span class="level-val" id="val-${realm.id}">0</span>
@@ -255,27 +244,27 @@ function renderSpellbooks() {
     });
 }
 
-function renderRetorts() {
-    const container = document.getElementById('retorts-container');
+function renderTraits() {
+    const container = document.getElementById('traits-container');
     container.innerHTML = '';
     
-    RETORTS.forEach(ret => {
+    TRAITS.forEach(t => {
         const div = document.createElement('div');
-        div.className = 'retort-card';
-        div.id = `retort-${ret.id}`;
+        div.className = 'trait-card';
+        div.id = `trait-${t.id}`;
         
         div.innerHTML = `
-            <div class="retort-info">
-                <div class="retort-header">
-                    <span class="retort-name">${ret.name}</span>
-                    <span class="retort-cost">${ret.cost} pick${ret.cost === 1 ? '' : 's'}</span>
+            <div class="trait-info">
+                <div class="trait-header">
+                    <span class="trait-name">${t.name}</span>
+                    <span class="trait-cost">${t.cost} pick${t.cost === 1 ? '' : 's'}</span>
                 </div>
-                <div class="retort-desc">${ret.desc}</div>
+                <div class="trait-desc">${t.desc}</div>
             </div>
-            <div class="retort-checkbox"></div>
+            <div class="trait-checkbox"></div>
         `;
         
-        div.addEventListener('click', () => toggleRetort(ret.id));
+        div.addEventListener('click', () => toggleTrait(t.id));
         container.appendChild(div);
     });
 }
@@ -289,7 +278,7 @@ function saveWizard() {
         name: state.name.trim(),
         portraitIdx: state.portraitIdx,
         spellbooks: { ...state.spellbooks },
-        retorts: [...state.retorts],
+        traits: [...state.traits],
         timestamp: new Date().toISOString()
     };
     
@@ -312,7 +301,7 @@ function loadWizard(wizardObj) {
         name: wizardObj.name,
         portraitIdx: wizardObj.portraitIdx,
         spellbooks: { ...wizardObj.spellbooks },
-        retorts: [...wizardObj.retorts]
+        traits: [...(wizardObj.traits || [])]
     };
     // Ensure all spellbooks exist
     REALMS.forEach(r => {
@@ -338,9 +327,9 @@ function generateSaveCardHTML(wiz, isPregen = false) {
             magicSummary.push(`<span class="${r.class}">${r.name} ${wiz.spellbooks[r.id]}</span>`);
         }
     });
-    wiz.retorts.forEach(rid => {
-        const ret = RETORTS.find(r => r.id === rid);
-        if (ret) magicSummary.push(`<span>${ret.name}</span>`);
+    (wiz.traits || []).forEach(rid => {
+        const trait = TRAITS.find(t => t.id === rid);
+        if (trait) magicSummary.push(`<span>${trait.name}</span>`);
     });
     
     const pSrc = PORTRAITS[wiz.portraitIdx] || PORTRAITS[0];
@@ -429,6 +418,68 @@ function showToast() {
     setTimeout(() => {
         toast.classList.add('hidden');
     }, 3000);
+}
+
+// Modal Logic
+function setupModal() {
+    document.getElementById('modal-close').addEventListener('click', () => {
+        document.getElementById('info-modal').classList.add('hidden');
+    });
+    document.getElementById('info-modal').addEventListener('click', (e) => {
+        if (e.target.id === 'info-modal') {
+            e.target.classList.add('hidden');
+        }
+    });
+    
+    document.getElementById('btn-spell-ranks').addEventListener('click', showSpellRanks);
+}
+
+window.showRealmInfo = function(realmId) {
+    const realm = REALMS.find(r => r.id === realmId);
+    if (!realm) return;
+    
+    document.getElementById('modal-title').textContent = realm.name + ' Magic';
+    document.getElementById('modal-body').innerHTML = `<p>${realm.desc}</p>`;
+    document.getElementById('info-modal').classList.remove('hidden');
+};
+
+function showSpellRanks() {
+    document.getElementById('modal-title').textContent = 'Spell Ranks';
+    
+    let rowsHTML = SPELL_RANKS.map(r => `
+        <tr>
+            <td>${r.books}</td>
+            <td>${r.common}</td>
+            <td>${r.uncommon}</td>
+            <td>${r.rare}</td>
+            <td>${r.veryRare}</td>
+            <td>${r.guaranteed}</td>
+        </tr>
+    `).join('');
+
+    const tableHTML = `
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Books</th>
+                    <th>Com.</th>
+                    <th>Unc.</th>
+                    <th>Rare</th>
+                    <th>VRare</th>
+                    <th>Guaranteed</th>
+                </tr>
+            </thead>
+            <tbody>
+                ${rowsHTML}
+            </tbody>
+        </table>
+        <p class="section-note" style="margin-top: 1rem;">
+            * At higher levels in a category (8+ books), wizards gain expertise reducing research/cast costs.
+        </p>
+    `;
+    
+    document.getElementById('modal-body').innerHTML = tableHTML;
+    document.getElementById('info-modal').classList.remove('hidden');
 }
 
 // Start

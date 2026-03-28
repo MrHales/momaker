@@ -1,0 +1,13 @@
+Number of Spell Books,Total Common Spells,Total Uncommon Spells,Total Rare Spells,Total Very Rare Spells,Number and Type of Guaranteed Spells
+1,3,1,none,none,none
+2,5,2,1,none,1 common
+3,4,3,2,1,2 common
+4,5,4,3,2,3 common
+5,6,5,4,3,4 common
+6,7,6,5,4,5 common
+7,10,7,6,5,6 common + 5% reduction*
+8,10,10,7,6,7 common + 10% reduction*
+9,10,10,10,7,8 common +15% reduction*
+10,10,10,10,10,9 com. + 1 uncom. + 20% reduction*
+11,10,10,10,10,10 com. + 2 uncom. +1 rare +25% reduction*
+"* At higher levels (i.e. when you choose a greater number of “books”) in a particular category, a wizard gains expertise in researching and casting spells. This translates to a reduction in the researching and casting of spells of the category in which your wizard has eight or more spell books.",,,,,

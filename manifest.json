@@ -1,6 +1,6 @@
 {
-  "name": "MoM Wizard Creator",
-  "short_name": "MoM Wizards",
+  "name": "MoMaker",
+  "short_name": "MoMaker",
   "description": "Progressive Web App for creating Master of Magic 2022 Custom Wizards",
   "start_url": "./index.html",
   "display": "standalone",
