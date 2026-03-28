@@ -61,6 +61,7 @@ function init() {
     renderPregen();
     
     setupModal();
+    checkDisclaimer();
 
     // Event Listeners
     document.getElementById('nav-editor').addEventListener('click', () => switchView('editor'));
@@ -546,6 +547,22 @@ function showSpellRanks() {
     
     document.getElementById('modal-body').innerHTML = tableHTML;
     document.getElementById('info-modal').classList.remove('hidden');
+}
+
+// Disclaimer Logic
+function checkDisclaimer() {
+    const isHidden = localStorage.getItem('mom_disclaimer_hidden');
+    if (isHidden !== 'true') {
+        document.getElementById('disclaimer-modal').classList.remove('hidden');
+    }
+    
+    document.getElementById('btn-disclaimer-ok').addEventListener('click', () => {
+        const shouldHide = document.getElementById('disclaimer-hide-check').checked;
+        if (shouldHide) {
+            localStorage.setItem('mom_disclaimer_hidden', 'true');
+        }
+        document.getElementById('disclaimer-modal').classList.add('hidden');
+    });
 }
 
 // Start
