@@ -1,4 +1,4 @@
-const CACHE_NAME = 'mom-wizard-cache-v9';
+const CACHE_NAME = 'mom-wizard-cache-v10';
 const urlsToCache = [
   './',
   './index.html',
