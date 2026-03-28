@@ -1,7 +1,3 @@
-/* MoMaker Logic */
-
-const TOTAL_PICKS = 11;
-
 // Data Structures (REALMS, TRAITS, PREGEN, SPELL_RANKS are in data.js)
 
 const PORTRAITS = [
@@ -38,7 +34,8 @@ let state = {
     name: '',
     portraitIdx: 0,
     spellbooks: { nature: 0, sorcery: 0, chaos: 0, life: 0, death: 0 },
-    traits: [] // array of id strings
+    traits: [], // array of id strings
+    maxPicks: 11
 };
 
 let saves = JSON.parse(localStorage.getItem('mom_wizards') || '[]');
@@ -77,6 +74,11 @@ function init() {
         updateSaveButtonState();
     });
 
+    document.getElementById('max-picks-select').addEventListener('change', (e) => {
+        state.maxPicks = parseInt(e.target.value);
+        updateUI();
+    });
+
     elSaveBtn.addEventListener('click', saveWizard);
 }
 
@@ -98,8 +100,22 @@ function getPicksSpent() {
 }
 
 function updateUI() {
+    // Check if any active traits fail reqs and auto-remove them
+    let traitRemoved = false;
+    for (let i = state.traits.length - 1; i >= 0; i--) {
+        const tid = state.traits[i];
+        const t = TRAITS.find(tr => tr.id === tid);
+        if (t && t.req && !t.req(state)) {
+            state.traits.splice(i, 1);
+            traitRemoved = true;
+        }
+    }
+    if (traitRemoved) { 
+        return updateUI(); 
+    }
+
     const spent = getPicksSpent();
-    const remaining = TOTAL_PICKS - spent;
+    const remaining = state.maxPicks - spent;
     
     // Update counter
     elPicks.textContent = remaining;
@@ -115,6 +131,23 @@ function updateUI() {
     REALMS.forEach(realm => {
         const val = state.spellbooks[realm.id];
         document.getElementById(`val-${realm.id}`).textContent = val;
+        
+        // Update inline spell details
+        const detailElem = document.getElementById(`details-${realm.id}`);
+        if (detailElem) {
+            if (val > 0) {
+                const rank = SPELL_RANKS.find(r => parseInt(r.books) === val);
+                if (rank) {
+                    let text = `${rank.common} com`;
+                    if (rank.uncommon && rank.uncommon !== 'none') text += `, ${rank.uncommon} unc`;
+                    if (rank.rare && rank.rare !== 'none') text += `, ${rank.rare} rare`;
+                    if (rank.veryRare && rank.veryRare !== 'none') text += `, ${rank.veryRare} v.rare`;
+                    detailElem.textContent = text;
+                }
+            } else {
+                detailElem.textContent = "";
+            }
+        }
         
         const btnMinus = document.getElementById(`minus-${realm.id}`);
         const btnPlus = document.getElementById(`plus-${realm.id}`);
@@ -143,17 +176,17 @@ function updateUI() {
         // Add a check in case the trait ID does not exist securely yet
         if (!card) return;
         const isActive = state.traits.includes(t.id);
+        const reqPasses = t.req ? t.req(state) : true;
         
         if (isActive) {
-            card.classList.add('active');
-            card.classList.remove('disabled');
+            card.className = 'trait-card active';
         } else {
-            card.classList.remove('active');
-            // Disable if not enough points left to buy it
-            if (remaining < t.cost) {
-                card.classList.add('disabled');
+            if (!reqPasses) {
+                card.className = 'trait-card disabled req-fail';
+            } else if (remaining < t.cost) {
+                card.className = 'trait-card disabled';
             } else {
-                card.classList.remove('disabled');
+                card.className = 'trait-card';
             }
         }
     });
@@ -162,7 +195,7 @@ function updateUI() {
 }
 
 function updateSaveButtonState() {
-    const remaining = TOTAL_PICKS - getPicksSpent();
+    const remaining = state.maxPicks - getPicksSpent();
     const hasName = state.name.trim().length > 0;
     // Allow saving if name exists and points are exactly 0 (or we can allow saving partials, let's allow saving valid combinations 11 points used)
     elSaveBtn.disabled = !hasName || remaining < 0; // || remaining > 0 (Wait, in standard MoM you don't HAVE to spend all points)
@@ -171,15 +204,16 @@ function updateSaveButtonState() {
 function toggleTrait(id) {
     const t = TRAITS.find(tr => tr.id === id);
     const cost = t.cost;
-    const remaining = TOTAL_PICKS - getPicksSpent();
+    const remaining = state.maxPicks - getPicksSpent();
     const idx = state.traits.indexOf(id);
+    const reqPasses = t.req ? t.req(state) : true;
     
     if (idx >= 0) {
         // Remove it
         state.traits.splice(idx, 1);
     } else {
-        // Add it if points allow
-        if (remaining >= cost) {
+        // Add it if points allow and reqs pass
+        if (remaining >= cost && reqPasses) {
             state.traits.push(id);
         }
     }
@@ -189,7 +223,7 @@ function toggleTrait(id) {
 function adjustBook(realmId, delta) {
     const current = state.spellbooks[realmId];
     const newAmount = current + delta;
-    const remaining = TOTAL_PICKS - getPicksSpent();
+    const remaining = state.maxPicks - getPicksSpent();
     
     if (delta > 0 && remaining < delta) return;
     if (newAmount < 0) return;
@@ -236,6 +270,7 @@ function renderSpellbooks() {
                 <span class="level-val" id="val-${realm.id}">0</span>
                 <button class="ctrl-btn" id="plus-${realm.id}">+</button>
             </div>
+            <div class="spell-details-inline" id="details-${realm.id}"></div>
         `;
         container.appendChild(div);
         
@@ -279,6 +314,7 @@ function saveWizard() {
         portraitIdx: state.portraitIdx,
         spellbooks: { ...state.spellbooks },
         traits: [...state.traits],
+        maxPicks: state.maxPicks,
         timestamp: new Date().toISOString()
     };
     
@@ -301,7 +337,8 @@ function loadWizard(wizardObj) {
         name: wizardObj.name,
         portraitIdx: wizardObj.portraitIdx,
         spellbooks: { ...wizardObj.spellbooks },
-        traits: [...(wizardObj.traits || [])]
+        traits: [...(wizardObj.traits || [])],
+        maxPicks: wizardObj.maxPicks || 11
     };
     // Ensure all spellbooks exist
     REALMS.forEach(r => {
@@ -309,6 +346,7 @@ function loadWizard(wizardObj) {
     });
     
     elName.value = state.name;
+    document.getElementById('max-picks-select').value = state.maxPicks;
     setPortrait(state.portraitIdx);
     updateUI();
     switchView('editor');

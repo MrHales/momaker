@@ -347,6 +347,12 @@ input[type="text"]:focus {
     cursor: not-allowed;
 }
 
+.trait-card.req-fail {
+    opacity: 0.25;
+    border-color: rgba(255, 50, 50, 0.4);
+    background: rgba(40, 0, 0, 0.4);
+}
+
 .trait-info {
     flex: 1;
     padding-right: 1rem;
@@ -565,6 +571,32 @@ input[type="text"]:focus {
     opacity: 0;
     transform: translate(-50%, 20px);
     pointer-events: none;
+}
+
+/* Dropdown styling */
+.glass-select {
+    background: rgba(0,0,0,0.3);
+    border: 1px solid var(--glass-border);
+    color: white;
+    padding: 0.3rem 0.5rem;
+    border-radius: 4px;
+    font-family: var(--font-body);
+    font-size: 1rem;
+    outline: none;
+    cursor: pointer;
+}
+.glass-select option {
+    background: #111;
+    color: white;
+}
+
+/* Inline spell details */
+.spell-details-inline {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    text-align: center;
+    margin-top: 0.4rem;
+    min-height: 1.1rem; /* prevent jumping when empty */
 }
 
 @keyframes fadeIn {

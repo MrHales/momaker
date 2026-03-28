@@ -24,9 +24,19 @@
         <main id="view-editor" class="view active">
             <!-- Summary Bar (Sticky) -->
             <div class="summary-bar glass-panel">
-                <div class="picks-remain">
-                    <span id="picks-counter" class="counter">11</span>
-                    <span class="label">Picks Remaining</span>
+                <div class="summary-left" style="display:flex; align-items:center; gap:1.5rem;">
+                    <div class="picks-remain">
+                        <span id="picks-counter" class="counter">11</span>
+                        <span class="label">Picks Remaining</span>
+                    </div>
+                    <div class="max-picks">
+                        <label for="max-picks-select" style="font-size:0.9rem; color:var(--text-muted); display:block; margin-bottom:0.2rem;">Starting Picks</label>
+                        <select id="max-picks-select" class="glass-select">
+                            <option value="10">10</option>
+                            <option value="11" selected>11</option>
+                            <option value="12">12</option>
+                        </select>
+                    </div>
                 </div>
                 <button id="btn-save" class="btn-primary" disabled>Save Wizard</button>
             </div>
