@@ -742,6 +742,7 @@ input[type="text"]:focus {
     background: rgba(255,255,255,0.1);
     border-color: var(--acc-color-primary);
     transform: translateY(-2px);
+    cursor: pointer;
 }
 
 .summary-pill .cost {

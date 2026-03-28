@@ -265,7 +265,7 @@ function updateWizardSummary() {
         if (count > 0) {
             pills.push(`
                 <div class="summary-pill">
-                    <span class="${r.class}">${r.name} - ${count}</span>
+                    <span class="${r.class}">${r.name} ${count}</span>
                 </div>
             `);
         }
@@ -276,10 +276,10 @@ function updateWizardSummary() {
         const trait = TRAITS.find(t => t.id === tid);
         if (trait) {
             pills.push(`
-                <a href="#trait-anchor-${trait.id}" class="summary-pill trait-pill">
+                <div class="summary-pill trait-pill" onclick="scrollToTrait('${trait.id}')">
                     <span>${trait.name}</span>
                     <span class="cost">${trait.cost}</span>
-                </a>
+                </div>
             `);
         }
     });
@@ -290,6 +290,30 @@ function updateWizardSummary() {
     } else {
         section.classList.add('hidden');
         content.innerHTML = '';
+    }
+}
+
+window.scrollToTrait = function(id) {
+    const el = document.getElementById(`trait-${id}`);
+    if (el) {
+        const offset = 120; // sticky header offset
+        const bodyRect = document.body.getBoundingClientRect().top;
+        const elementRect = el.getBoundingClientRect().top;
+        const elementPosition = elementRect - bodyRect;
+        const offsetPosition = elementPosition - offset;
+
+        window.scrollTo({
+            top: offsetPosition,
+            behavior: 'smooth'
+        });
+        
+        // Brief highlight effect
+        el.style.borderColor = 'var(--acc-color-gold)';
+        el.style.boxShadow = '0 0 20px var(--acc-color-gold)';
+        setTimeout(() => {
+            el.style.borderColor = '';
+            el.style.boxShadow = '';
+        }, 1000);
     }
 }
 
@@ -344,14 +368,6 @@ function renderTraits() {
         const div = document.createElement('div');
         div.className = 'trait-card';
         div.id = `trait-${t.id}`;
-        
-        // Add anchor wrapper or ID for navigation
-        const anchor = document.createElement('div');
-        anchor.id = `trait-anchor-${t.id}`;
-        anchor.style.position = 'absolute';
-        anchor.style.marginTop = '-120px'; // Offset for sticky header
-        
-        div.appendChild(anchor);
         
         div.innerHTML = `
             <div class="trait-info">
