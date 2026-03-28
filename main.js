@@ -65,7 +65,7 @@ function init() {
     // Event Listeners
     document.getElementById('nav-editor').addEventListener('click', () => switchView('editor'));
     document.getElementById('nav-saves').addEventListener('click', () => switchView('saves'));
-    document.getElementById('nav-classics').addEventListener('click', () => switchView('classics'));
+    document.getElementById('nav-defaults').addEventListener('click', () => switchView('defaults'));
     
     document.getElementById('portrait-prev').addEventListener('click', () => cyclePortrait(-1));
     document.getElementById('portrait-next').addEventListener('click', () => cyclePortrait(1));
@@ -178,13 +178,14 @@ function updateUI() {
         if (!card) return;
         const isActive = state.traits.includes(t.id);
         const reqPasses = t.req ? t.req(state) : true;
+        const limitReached = state.traits.length >= 6 && !isActive;
         
         if (isActive) {
             card.className = 'trait-card active';
         } else {
             if (!reqPasses) {
                 card.className = 'trait-card disabled req-fail';
-            } else if (remaining < t.cost) {
+            } else if (remaining < t.cost || limitReached) {
                 card.className = 'trait-card disabled';
             } else {
                 card.className = 'trait-card';
@@ -213,8 +214,8 @@ function toggleTrait(id) {
         // Remove it
         state.traits.splice(idx, 1);
     } else {
-        // Add it if points allow and reqs pass
-        if (remaining >= cost && reqPasses) {
+        // Add it if points allow, reqs pass, and we haven't reached the 6-trait limit
+        if (remaining >= cost && reqPasses && state.traits.length < 6) {
             state.traits.push(id);
         }
     }
