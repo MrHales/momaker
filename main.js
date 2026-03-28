@@ -360,6 +360,25 @@ function loadWizard(wizardObj) {
     switchView('editor');
 }
 
+window.resetEditor = function() {
+    state = {
+        id: null,
+        name: '',
+        portraitIdx: 0,
+        spellbooks: {},
+        traits: [],
+        maxPicks: 11
+    };
+    
+    REALMS.forEach(r => state.spellbooks[r.id] = 0);
+    
+    elName.value = '';
+    document.getElementById('max-picks-select').value = '11';
+    setPortrait(0);
+    updateUI();
+    switchView('editor');
+}
+
 function deleteWizard(id) {
     saves = saves.filter(s => s.id !== id);
     localStorage.setItem('mom_wizards', JSON.stringify(saves));
