@@ -82,6 +82,19 @@ function init() {
     });
 
     elSaveBtn.addEventListener('click', saveWizard);
+    
+    // Scroll Top logic
+    const btnTop = document.getElementById('btn-scroll-top');
+    window.addEventListener('scroll', () => {
+        if (window.scrollY > 300) {
+            btnTop.classList.remove('hidden');
+        } else {
+            btnTop.classList.add('hidden');
+        }
+    });
+    btnTop.addEventListener('click', () => {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
 }
 
 // -----------------------------------------------------------------
@@ -193,7 +206,8 @@ function updateUI() {
             }
         }
     });
-
+    
+    updateWizardSummary();
     updateSaveButtonState();
 }
 
@@ -237,6 +251,46 @@ function adjustBook(realmId, delta) {
     
     state.spellbooks[realmId] = newAmount;
     updateUI();
+}
+
+function updateWizardSummary() {
+    const section = document.getElementById('wizard-summary-section');
+    const content = document.getElementById('wizard-summary-content');
+    
+    let pills = [];
+    
+    // Realms
+    REALMS.forEach(r => {
+        const count = state.spellbooks[r.id];
+        if (count > 0) {
+            pills.push(`
+                <div class="summary-pill">
+                    <span class="${r.class}">${r.name} - ${count}</span>
+                </div>
+            `);
+        }
+    });
+    
+    // Traits
+    state.traits.forEach(tid => {
+        const trait = TRAITS.find(t => t.id === tid);
+        if (trait) {
+            pills.push(`
+                <a href="#trait-anchor-${trait.id}" class="summary-pill trait-pill">
+                    <span>${trait.name}</span>
+                    <span class="cost">${trait.cost}</span>
+                </a>
+            `);
+        }
+    });
+    
+    if (pills.length > 0) {
+        section.classList.remove('hidden');
+        content.innerHTML = pills.join('');
+    } else {
+        section.classList.add('hidden');
+        content.innerHTML = '';
+    }
 }
 
 function cyclePortrait(dir) {
@@ -290,6 +344,14 @@ function renderTraits() {
         const div = document.createElement('div');
         div.className = 'trait-card';
         div.id = `trait-${t.id}`;
+        
+        // Add anchor wrapper or ID for navigation
+        const anchor = document.createElement('div');
+        anchor.id = `trait-anchor-${t.id}`;
+        anchor.style.position = 'absolute';
+        anchor.style.marginTop = '-120px'; // Offset for sticky header
+        
+        div.appendChild(anchor);
         
         div.innerHTML = `
             <div class="trait-info">
