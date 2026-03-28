@@ -129,14 +129,44 @@ nav {
 /* Summary Bar */
 .summary-bar {
     display: flex;
-    justify-content: space-between;
-    align-items: center;
+    flex-direction: column;
+    gap: 1.2rem;
     padding: 1rem;
     margin: 1rem;
     position: sticky;
     top: 90px;
     z-index: 90;
     box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+}
+
+.summary-left {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    padding: 0 0.5rem;
+}
+
+.action-buttons {
+    display: flex;
+    gap: 0.8rem;
+    width: 100%;
+}
+
+.action-buttons .btn-primary {
+    flex: 1;
+    padding: 0.7rem 0.5rem;
+    font-size: 0.9rem;
+    white-space: nowrap;
+}
+
+.select-label {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    display: block;
+    margin-bottom: 0.2rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
 }
 
 .picks-remain {
