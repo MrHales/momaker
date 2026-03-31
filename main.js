@@ -58,7 +58,7 @@ function init() {
     renderTraits();
     updateUI();
     renderSaves();
-    renderPregen();
+    renderDefaults();
     
     setupModal();
     checkDisclaimer();
@@ -490,7 +490,7 @@ function generateSaveCardHTML(wiz, isPregen = false) {
     } else {
         actionsHTML = `
             <div class="wizard-actions">
-                <button class="btn-small" onclick='loadPregen(${JSON.stringify(wiz).replace(/'/g, "&#39;")})'>Use</button>
+                <button class="btn-small" onclick='loadDefaultWizard(${JSON.stringify(wiz).replace(/'/g, "&#39;")})'>Use</button>
             </div>
         `;
     }
@@ -518,8 +518,8 @@ function renderSaves() {
     }
 }
 
-function renderPregen() {
-    const container = document.getElementById('classics-wizards-list');
+function renderDefaults() {
+    const container = document.getElementById('defaults-wizards-list');
     container.innerHTML = PREGEN.map(wiz => generateSaveCardHTML(wiz, true)).join('');
 }
 
@@ -535,7 +535,7 @@ window.deleteWizardFromSaves = function(id) {
     }
 }
 
-window.loadPregen = function(wiz) {
+window.loadDefaultWizard = function(wiz) {
     // Clone it without an ID so it saves as new
     const clone = { ...wiz };
     delete clone.id;
