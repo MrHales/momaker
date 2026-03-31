@@ -599,6 +599,44 @@ input[type="text"]:focus {
     min-height: 1.1rem; /* prevent jumping when empty */
 }
 
+/* Mobile Tweaks */
+@media (max-width: 600px) {
+    .summary-bar {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 0.8rem;
+        top: 75px;
+        margin: 0.5rem;
+        padding: 0.8rem;
+    }
+    
+    .summary-left {
+        flex-direction: column;
+        align-items: flex-start !important;
+        gap: 0.5rem !important;
+    }
+    
+    .picks-remain {
+        flex-direction: row;
+        align-items: baseline;
+        gap: 0.5rem;
+    }
+    
+    .action-buttons {
+        width: 100%;
+    }
+    
+    .action-buttons .btn-primary {
+        flex: 1;
+        font-size: 0.9rem;
+        padding: 0.6rem 1rem;
+    }
+}
+
+.trait-card, .spellbook-card {
+    scroll-margin-top: 230px; /* Header + Sticky Summary bar buffer */
+}
+
 @keyframes fadeIn {
     from { opacity: 0; transform: translateY(10px); }
     to { opacity: 1; transform: translateY(0); }
