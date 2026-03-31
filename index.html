@@ -17,7 +17,7 @@
             <nav>
                 <button id="nav-editor" class="nav-btn active">Editor</button>
                 <button id="nav-saves" class="nav-btn">Saves</button>
-                <button id="nav-classics" class="nav-btn">Classics</button>
+                <button id="nav-defaults" class="nav-btn">Defaults</button>
             </nav>
         </header>
 
@@ -25,13 +25,13 @@
         <main id="view-editor" class="view active">
             <!-- Summary Bar (Sticky) -->
             <div class="summary-bar glass-panel">
-                <div class="summary-left" style="display:flex; align-items:center; gap:1.5rem;">
+                <div class="summary-left">
                     <div class="picks-remain">
                         <span id="picks-counter" class="counter">11</span>
                         <span class="label">Picks Remaining</span>
                     </div>
                     <div class="max-picks">
-                        <label for="max-picks-select" style="font-size:0.9rem; color:var(--text-muted); display:block; margin-bottom:0.2rem;">Starting Picks</label>
+                        <label for="max-picks-select" class="select-label">Starting Picks</label>
                         <select id="max-picks-select" class="glass-select">
                             <option value="10">10</option>
                             <option value="11" selected>11</option>
@@ -39,7 +39,7 @@
                         </select>
                     </div>
                 </div>
-                <div class="action-buttons" style="display:flex; gap:1rem;">
+                <div class="action-buttons">
                     <button id="btn-clear" class="btn-primary" onclick="resetEditor()">New Wizard</button>
                     <button id="btn-save" class="btn-primary" disabled>Save Wizard</button>
                 </div>
@@ -51,13 +51,18 @@
                 <div class="portrait-carousel">
                     <button class="portrait-btn arrow-btn" id="portrait-prev">&lt;</button>
                     <div class="portrait-container">
-                        <img id="wizard-portrait" src="assets/wizard_life.png" alt="Wizard Portrait">
+                        <img id="wizard-portrait" src="portraits/ariel.png" alt="Wizard Portrait">
                     </div>
                     <button class="portrait-btn arrow-btn" id="portrait-next">&gt;</button>
                 </div>
                 <div class="input-group">
                     <input type="text" id="wizard-name" placeholder="Enter Wizard Name..." maxlength="30">
                 </div>
+            </div>
+
+            <!-- Wizard Summary Section -->
+            <div id="wizard-summary-section" class="section hidden">
+                <div id="wizard-summary-content" class="wizard-summary-pills"></div>
             </div>
 
             <!-- Spellbooks -->
@@ -88,10 +93,10 @@
             </div>
         </main>
 
-        <!-- CLASSICS VIEW -->
-        <main id="view-classics" class="view hidden">
+        <!-- DEFAULTS VIEW -->
+        <main id="view-defaults" class="view hidden">
             <div class="section">
-                <h2>Classic Wizards</h2>
+                <h2>Default Wizards</h2>
                 <div id="classics-wizards-list" class="wizards-grid">
                     <!-- Pregen Wizards populated by JS -->
                 </div>
@@ -99,7 +104,7 @@
         </main>
         
         <footer style="text-align: center; color: var(--text-muted); font-size: 0.8rem; margin: 2rem 0 1rem 0; padding-top: 1rem; border-top: 1px solid rgba(255,255,255,0.1);">
-            Copyright &copy; 2026 Matthew Hales. Master of Magic is owned by Slitherine Software UK Ltd. All other trademarks belong to their respective owners. All rights reserved.
+            Master of Magic is owned by Slitherine Software UK Ltd. All other trademarks belong to their respective owners. All rights reserved.
         </footer>
     </div>
 
@@ -116,6 +121,27 @@
             </div>
         </div>
     </div>
+
+    <!-- Disclaimer Modal -->
+    <div id="disclaimer-modal" class="modal-overlay hidden">
+        <div class="modal-window glass-panel">
+            <h2 class="glow-text">MoMaker is an Unofficial Fan Project</h2>
+            <div class="modal-body">
+                <p>This application is an unofficial, non-commercial fan project. It is not affiliated with, endorsed, sponsored, or specifically approved by Slitherine Ltd. or MuHa Games. Master of Magic and all related characters, names, and assets are trademarks and copyrighted property of Slitherine Ltd.</p>
+                
+                <div class="disclaimer-footer">
+                    <label class="checkbox-container">
+                        <input type="checkbox" id="disclaimer-hide-check">
+                        <span class="checkmark"></span>
+                        Don't show this again
+                    </label>
+                    <button id="btn-disclaimer-ok" class="btn-primary">Okay</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <button id="btn-scroll-top" class="top-btn hidden">Top</button>
 
     <script src="data.js"></script>
     <script src="main.js"></script>

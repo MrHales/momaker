@@ -61,11 +61,12 @@ function init() {
     renderPregen();
     
     setupModal();
+    checkDisclaimer();
 
     // Event Listeners
     document.getElementById('nav-editor').addEventListener('click', () => switchView('editor'));
     document.getElementById('nav-saves').addEventListener('click', () => switchView('saves'));
-    document.getElementById('nav-classics').addEventListener('click', () => switchView('classics'));
+    document.getElementById('nav-defaults').addEventListener('click', () => switchView('defaults'));
     
     document.getElementById('portrait-prev').addEventListener('click', () => cyclePortrait(-1));
     document.getElementById('portrait-next').addEventListener('click', () => cyclePortrait(1));
@@ -81,6 +82,19 @@ function init() {
     });
 
     elSaveBtn.addEventListener('click', saveWizard);
+    
+    // Scroll Top logic
+    const btnTop = document.getElementById('btn-scroll-top');
+    window.addEventListener('scroll', () => {
+        if (window.scrollY > 300) {
+            btnTop.classList.remove('hidden');
+        } else {
+            btnTop.classList.add('hidden');
+        }
+    });
+    btnTop.addEventListener('click', () => {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
 }
 
 // -----------------------------------------------------------------
@@ -178,20 +192,22 @@ function updateUI() {
         if (!card) return;
         const isActive = state.traits.includes(t.id);
         const reqPasses = t.req ? t.req(state) : true;
+        const limitReached = state.traits.length >= 6 && !isActive;
         
         if (isActive) {
             card.className = 'trait-card active';
         } else {
             if (!reqPasses) {
                 card.className = 'trait-card disabled req-fail';
-            } else if (remaining < t.cost) {
+            } else if (remaining < t.cost || limitReached) {
                 card.className = 'trait-card disabled';
             } else {
                 card.className = 'trait-card';
             }
         }
     });
-
+    
+    updateWizardSummary();
     updateSaveButtonState();
 }
 
@@ -213,8 +229,8 @@ function toggleTrait(id) {
         // Remove it
         state.traits.splice(idx, 1);
     } else {
-        // Add it if points allow and reqs pass
-        if (remaining >= cost && reqPasses) {
+        // Add it if points allow, reqs pass, and we haven't reached the 6-trait limit
+        if (remaining >= cost && reqPasses && state.traits.length < 6) {
             state.traits.push(id);
         }
     }
@@ -235,6 +251,70 @@ function adjustBook(realmId, delta) {
     
     state.spellbooks[realmId] = newAmount;
     updateUI();
+}
+
+function updateWizardSummary() {
+    const section = document.getElementById('wizard-summary-section');
+    const content = document.getElementById('wizard-summary-content');
+    
+    let pills = [];
+    
+    // Realms
+    REALMS.forEach(r => {
+        const count = state.spellbooks[r.id];
+        if (count > 0) {
+            pills.push(`
+                <div class="summary-pill">
+                    <span class="${r.class}">${r.name} ${count}</span>
+                </div>
+            `);
+        }
+    });
+    
+    // Traits
+    state.traits.forEach(tid => {
+        const trait = TRAITS.find(t => t.id === tid);
+        if (trait) {
+            pills.push(`
+                <div class="summary-pill trait-pill" onclick="scrollToTrait('${trait.id}')">
+                    <span>${trait.name}</span>
+                    <span class="cost">${trait.cost}</span>
+                </div>
+            `);
+        }
+    });
+    
+    if (pills.length > 0) {
+        section.classList.remove('hidden');
+        content.innerHTML = pills.join('');
+    } else {
+        section.classList.add('hidden');
+        content.innerHTML = '';
+    }
+}
+
+window.scrollToTrait = function(id) {
+    const el = document.getElementById(`trait-${id}`);
+    if (el) {
+        const offset = 280; // Large offset for multi-line sticky header and buttons
+        const bodyRect = document.body.getBoundingClientRect().top;
+        const elementRect = el.getBoundingClientRect().top;
+        const elementPosition = elementRect - bodyRect;
+        const offsetPosition = elementPosition - offset;
+
+        window.scrollTo({
+            top: offsetPosition,
+            behavior: 'smooth'
+        });
+        
+        // Brief highlight effect
+        el.style.borderColor = 'var(--acc-color-gold)';
+        el.style.boxShadow = '0 0 20px var(--acc-color-gold)';
+        setTimeout(() => {
+            el.style.borderColor = '';
+            el.style.boxShadow = '';
+        }, 1000);
+    }
 }
 
 function cyclePortrait(dir) {
@@ -545,6 +625,22 @@ function showSpellRanks() {
     
     document.getElementById('modal-body').innerHTML = tableHTML;
     document.getElementById('info-modal').classList.remove('hidden');
+}
+
+// Disclaimer Logic
+function checkDisclaimer() {
+    const isHidden = localStorage.getItem('mom_disclaimer_hidden');
+    if (isHidden !== 'true') {
+        document.getElementById('disclaimer-modal').classList.remove('hidden');
+    }
+    
+    document.getElementById('btn-disclaimer-ok').addEventListener('click', () => {
+        const shouldHide = document.getElementById('disclaimer-hide-check').checked;
+        if (shouldHide) {
+            localStorage.setItem('mom_disclaimer_hidden', 'true');
+        }
+        document.getElementById('disclaimer-modal').classList.add('hidden');
+    });
 }
 
 // Start
