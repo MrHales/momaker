@@ -549,12 +549,20 @@ window.loadDefaultWizard = function(wiz) {
 // -----------------------------------------------------------------
 // UTILS
 // -----------------------------------------------------------------
+const scrollPositions = {};
+let currentView = 'editor';
+
 function switchView(viewName) {
+    scrollPositions[currentView] = window.scrollY;
+
     document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
     document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
     
     document.getElementById(`view-${viewName}`).classList.add('active');
     document.getElementById(`nav-${viewName}`).classList.add('active');
+    
+    currentView = viewName;
+    window.scrollTo(0, scrollPositions[viewName] || 0);
 }
 
 function showToast() {
