@@ -388,12 +388,12 @@ input[type="text"]:focus {
 }
 
 .trait-card.disabled {
-    opacity: 0.4;
+    opacity: 0.6;
     cursor: not-allowed;
 }
 
 .trait-card.req-fail {
-    opacity: 0.25;
+    opacity: 0.4;
     border-color: rgba(255, 50, 50, 0.4);
     background: rgba(40, 0, 0, 0.4);
 }
