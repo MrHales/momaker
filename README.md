@@ -1,3 +1,5 @@
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2FMrHales%2Fmomaker.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2FMrHales%2Fmomaker?ref=badge_shield)
+
 Legal Disclaimer & Copyright Notice
 Not an Official Product
 This project is a community-created, unofficial fan application. It is completely entirely independent and is not associated with, endorsed by, or sponsored by Slitherine Ltd. or MuHa Games in any way.
@@ -7,3 +9,7 @@ All rights regarding Master of Magic, its universe, lore, characters, mechanics 
 
 Non-Commercial Use
 This application is provided completely free of charge. There are no paywalls, mandatory advertisements, or premium features. It is built by fans, for fans.
+
+
+## License
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2FMrHales%2Fmomaker.svg?type=large)](https://app.fossa.com/projects/git%2Bgithub.com%2FMrHales%2Fmomaker?ref=badge_large)
